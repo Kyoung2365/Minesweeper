@@ -1,21 +1,21 @@
 #include "Window.h"
 
 Window::Window() : wxFrame(nullptr, wxID_ANY, "Minesweeper", wxPoint(30, 30), wxSize(500, 500)) {
-	button = new wxButton * [nFieldWidth * nFieldHeight];
-	wxGridSizer* grid = new wxGridSizer(nFieldWidth, nFieldHeight, 0, 0);
+	Button = new wxButton * [CellWidth * CellHeight];
+	wxGridSizer* grid = new wxGridSizer(CellWidth, CellHeight, 0, 0);
 
-	nField = new int[nFieldWidth * nFieldHeight];
+	Cell = new int[CellWidth * CellHeight];
 
 	wxFont font(24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
 
-	for (int x = 0; x < nFieldWidth; x++) {
-		for (int y = 0; y < nFieldHeight; y++) {
-			button[y * nFieldWidth + x] = new wxButton(this, 10000 + (y * nFieldWidth + x));
-			button[y * nFieldWidth + x]->SetFont(font);
-			grid->Add(button[y * nFieldWidth + x], 1, wxEXPAND | wxALL);
+	for (int x = 0; x < CellWidth; x++) {
+		for (int y = 0; y < CellHeight; y++) {
+			Button[y * CellWidth + x] = new wxButton(this, 10000 + (y * CellWidth + x));
+			Button[y * CellWidth + x]->SetFont(font);
+			grid->Add(Button[y * CellWidth + x], 1, wxEXPAND | wxALL);
 
-			button[y * nFieldWidth + x]->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &Window::OnButtonClicked, this);
-			nField[y * nFieldWidth + x] = 0;
+			Button[y * CellWidth + x]->Bind(wxEVT_COMMAND_Button_CLICKED, &Window::OnButtonClicked, this);
+			Cell[y * CellWidth + x] = 0;
 		}
 	}
 	this->SetSizer(grid);
@@ -23,53 +23,53 @@ Window::Window() : wxFrame(nullptr, wxID_ANY, "Minesweeper", wxPoint(30, 30), wx
 }
 
 Window::~Window() {
-	delete[]button;
-	delete nField;
+	delete[]Button;
+	delete Cell;
 }
 
 void Window::OnButtonClicked(wxCommandEvent& evt) {
 
-	int x = (evt.GetId() - 10000) % nFieldWidth;
-	int y = (evt.GetId() - 10000) / nFieldWidth;
+	int x = (evt.GetId() - 10000) % CellWidth;
+	int y = (evt.GetId() - 10000) / CellWidth;
 
-	if (bFirstClick) {
+	if (FirstClick) {
 		int mines = 30;
 
 		while (mines) {
-			int rx = rand() % nFieldWidth;
-			int ry = rand() % nFieldHeight;
+			int rx = rand() % CellWidth;
+			int ry = rand() % CellHeight;
 
-			if (nField[ry * nFieldWidth + rx] == 0 && rx != x && ry != y) {
-				nField[ry * nFieldWidth + rx] = -1;
+			if (Cell[ry * CellWidth + rx] == 0 && rx != x && ry != y) {
+				Cell[ry * CellWidth + rx] = -1;
 				mines--;
 			}
 		}
-		bFirstClick = false;
+		FirstClick = false;
 	}
-	button[y * nFieldWidth + x]->Enable(false);
+	Button[y * CellWidth + x]->Enable(false);
 
-	if (nField[y * nFieldWidth + x] == -1) {
+	if (Cell[y * CellWidth + x] == -1) {
 		wxMessageBox("BOOM!! - Game Over :(");
 
-		bFirstClick = true;
-		for (int x = 0; x < nFieldWidth; x++)
-			for (int y = 0; y < nFieldHeight; y++){
-				nField[y * nFieldWidth + x] = 0;
-				button[y * nFieldWidth + x]->SetLabel("");
-				button[y * nFieldWidth + x]->Enable(true);
+		FirstClick = true;
+		for (int x = 0; x < CellWidth; x++)
+			for (int y = 0; y < CellHeight; y++){
+				Cell[y * CellWidth + x] = 0;
+				Button[y * CellWidth + x]->SetLabel("");
+				Button[y * CellWidth + x]->Enable(true);
 			}
 	}
 	else {
 		int mine_count = 0;
 		for(int i = -1; i < 2; i++)
 			for (int j = -1; j < 2; j++) {
-				if (x + i >= 0 && x + i < nFieldWidth && y + j >= 0 && y + j < nFieldHeight) {
-					if (nField[(y + j) * nFieldWidth + (x + i)] == -1)
+				if (x + i >= 0 && x + i < CellWidth && y + j >= 0 && y + j < CellHeight) {
+					if (Cell[(y + j) * CellWidth + (x + i)] == -1)
 						mine_count++;
 				}
 			}
 		if (mine_count > 0) {
-			button[y * nFieldWidth + x]->SetLabel(std::to_string(mine_count));
+			Button[y * CellWidth + x]->SetLabel(std::to_string(mine_count));
 		}
 	}
 
