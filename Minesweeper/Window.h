@@ -3,8 +3,16 @@
 class Window : public wxFrame
 {
 private:
-	wxButton* button;
+	int nFieldWidth = 10;
+	int nFieldHeight = 10;
+	wxButton  **button;
+	int* nField = nullptr;
+	bool bFirstClick = true;
+
+	void OnButtonClicked(wxCommandEvent& evt);
+
 public:
 	Window();
+	~Window();
 };
 
