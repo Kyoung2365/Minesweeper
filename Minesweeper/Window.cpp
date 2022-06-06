@@ -14,7 +14,7 @@ Window::Window() : wxFrame(nullptr, wxID_ANY, "Minesweeper", wxPoint(30, 30), wx
 			Button[y * CellWidth + x]->SetFont(font);
 			grid->Add(Button[y * CellWidth + x], 1, wxEXPAND | wxALL);
 
-			Button[y * CellWidth + x]->Bind(wxEVT_COMMAND_Button_CLICKED, &Window::OnButtonClicked, this);
+			Button[y * CellWidth + x]->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &Window::OnButtonClicked, this);
 			Cell[y * CellWidth + x] = 0;
 		}
 	}
